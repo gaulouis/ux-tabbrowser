@@ -17,13 +17,15 @@
  * with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifdef HAVE_CONFIG_H
 #include <config.h>
-#include <gtk/gtk.h>
+#endif
+
 #include "ux-tabbrowser.h"
 
 
+#include <gtk/gtk.h>
 #include <glib/gi18n.h>
-
 
 
 static GtkWidget*

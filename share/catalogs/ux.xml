@@ -1,0 +1,59 @@
+<glade-catalog version="2.24" targetable="2.22,2.20,2.18,2.16,2.14,2.12,2.10,2.8" supports="gtkbuilder" name="ux" library="gladeux" icon-prefix="ux" domain="glade3ux" book="ux">
+  <project-convert-function>glade_ux_project_convert</project-convert-function>
+
+  <glade-widget-classes>
+
+    <glade-widget-class name="UxTabbrowser" generic-name="tabbrowser" title="Tabbrowser">
+      <post-create-function>glade_ux_tabbrowser_post_create</post-create-function>
+      <!--add-child-function>glade_ux_tabbrowser_add_child</add-child-function-->
+      <!--remove-child-function>glade_ux_tabbrowser_remove_child</remove-child-function-->
+      <!--replace-child-function>glade_ux_tabbrowser_replace_child</replace-child-function-->
+      <!--child-set-property-function>glade_ux_tabbrowser_set_child_property</child-set-property-function-->
+      <!--child-get-property-function>glade_ux_tabbrowser_get_child_property</child-get-property-function-->
+      <!--child-verify-function>glade_ux_tabbrowser_child_verify_property</child-verify-function-->
+      <special-child-type>type</special-child-type>
+      <!--set-property-function>glade_ux_tabbrowser_set_property</set-property-function-->
+      <!--verify-function>glade_ux_tabbrowser_verify_property</verify-function-->
+      <!--child-action-activate-function>glade_ux_tabbrowser_child_action_activate</child-action-activate-function-->
+
+      <signals>
+        <signal since="2.10" id="page-added"/>
+        <signal since="2.10" id="page-removed"/>
+        <signal since="2.10" id="page-reordered"/>
+        <signal since="2.12" id="create-window"/>
+      </signals>
+
+      <packing-actions>
+        <action stock="gtk-add" id="insert_page_before" name="Insert Page Before"></action>
+        <action stock="gtk-add" id="insert_page_after" name="Insert Page After"></action>
+        <action stock="gtk-remove" id="remove_page" name="Remove Page"></action>
+      </packing-actions>
+
+      <properties>
+        <property since="2.12" id="group"/>
+        <property since="2.24" id="group-name"/>
+        <property save="False" id="page">
+          <tooltip>Set the current page (strictly for editing purposes)</tooltip>
+        </property>
+
+        <property visible="False" save="False" id="pages" default="3" name="Number of pages">
+          <parameter-spec>
+            <type>GParamInt</type>
+            <min>1</min>
+          </parameter-spec>
+          <tooltip>The number of pages in the tabbrowser</tooltip>
+        </property>
+      </properties>
+
+      <packing-properties>
+        <property id="tab-label" disabled="True"/>
+      </packing-properties>
+    </glade-widget-class>
+
+  </glade-widget-classes>
+
+  <glade-widget-group name="ux-containers" title="Containers">
+    <glade-widget-class-ref name="UxTabbrowser"/>
+  </glade-widget-group>
+
+</glade-catalog>

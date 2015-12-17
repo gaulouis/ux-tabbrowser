@@ -11,7 +11,9 @@ AM_SILENT_RULES([yes])
 
 AC_PROG_CC
 
-
+AC_ENABLE_SHARED
+AC_ENABLE_STATIC
+AC_PROG_LIBTOOL(libtool)
 
 
 dnl ***************************************************************************
@@ -54,6 +56,7 @@ LT_INIT([win32-dll])
 
 
 PKG_CHECK_MODULES(UX_TABBROWSER, [gtk+-2.0 ])
+PKG_CHECK_MODULES(GLADE_GUI, [gladeui-1.0 ])
 
 
 
@@ -64,5 +67,6 @@ AC_OUTPUT([
 Makefile
 src/Makefile
 lib/Makefile
+plugins/Makefile
 po/Makefile.in
 ])
