@@ -63,5 +63,6 @@ PKG_CHECK_MODULES(UX_TABBROWSER, [gtk+-2.0 ])
 AC_OUTPUT([
 Makefile
 src/Makefile
+lib/Makefile
 po/Makefile.in
 ])

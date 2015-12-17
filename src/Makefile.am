@@ -2,17 +2,20 @@
 
 ## Created by Anjuta
 
+UX_LIBS=$(top_builddir)/lib/libux.la
+UX_INCLUDES=-I$(top_srcdir)/lib
 
 
 AM_CPPFLAGS = \
 	-DPACKAGE_LOCALE_DIR=\""$(localedir)"\" \
 	-DPACKAGE_SRC_DIR=\""$(srcdir)"\" \
 	-DPACKAGE_DATA_DIR=\""$(pkgdatadir)"\" \
-	$(UX_TABBROWSER_CFLAGS)
+        $(UX_TABBROWSER_CFLAGS) \
+        $(UX_INCLUDES)
 
 AM_CFLAGS =\
 	 -Wall\
-	 -g
+         -g
 
 bin_PROGRAMS = ux_tabbrowser
 
@@ -22,7 +25,7 @@ ux_tabbrowser_SOURCES = \
 
 ux_tabbrowser_LDFLAGS =
 
-ux_tabbrowser_LDADD = $(UX_TABBROWSER_LIBS)
+ux_tabbrowser_LDADD = $(UX_TABBROWSER_LIBS) $(UX_LIBS)
 
 
 if PLATFORM_WIN32

@@ -19,6 +19,7 @@
 
 #include <config.h>
 #include <gtk/gtk.h>
+#include "ux-tabbrowser.h"
 
 
 #include <glib/gi18n.h>
@@ -29,9 +30,14 @@ static GtkWidget*
 create_window (void)
 {
 	GtkWidget *window;
+    GtkWidget *tabbrowser;
 
 	window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_title (GTK_WINDOW (window), "ux-tabbrowser");
+
+    tabbrowser = g_object_new(UX_TYPE_TABBROWSER, NULL);
+    gtk_notebook_append_page(GTK_NOTEBOOK(tabbrowser), gtk_label_new("Content"), gtk_label_new("Label"));
+    gtk_container_add(GTK_CONTAINER(window), GTK_WIDGET(tabbrowser));
 
 	/* Exit when the window is closed */
 	g_signal_connect (window, "destroy", G_CALLBACK (gtk_main_quit), NULL);
@@ -64,7 +70,7 @@ main (int argc, char *argv[])
 	gtk_init (&argc, &argv);
 
 	window = create_window ();
-	gtk_widget_show (window);
+    gtk_widget_show_all (window);
 
 	gtk_main ();
 
