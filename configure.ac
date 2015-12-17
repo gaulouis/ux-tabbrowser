@@ -53,11 +53,11 @@ AM_CONDITIONAL(NATIVE_WIN32, test x"$native_win32" = "xyes")
 LT_INIT([win32-dll])
 
 
-PKG_CHECK_MODULES(UX_TABBROWSER, [gtk+-3.0 ])
+PKG_CHECK_MODULES(UX_TABBROWSER, [gtk+-2.0 ])
 
 
 
-GTK_DOC_CHECK([1.0])
+#GTK_DOC_CHECK([1.0])
 
 
 AC_OUTPUT([
