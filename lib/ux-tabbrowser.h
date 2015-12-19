@@ -48,7 +48,8 @@ struct _UxTabbrowserClass
   GtkNotebookClass parent_class;
 };
 
-GType ux_tabbrowser_get_type (void) G_GNUC_CONST;
+GType       ux_tabbrowser_get_type (void) G_GNUC_CONST;
+GtkWidget  *ux_tabbrowser_new      (void);
 
 G_END_DECLS
 
