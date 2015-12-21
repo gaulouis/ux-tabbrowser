@@ -1,0 +1,42 @@
+# ==============================================================================
+# UX-TABBROWSER SPECIFIC SETTINGS
+# ==============================================================================
+gtk-color-scheme = "dark_bg_color:#3c3b37\ndark_fg_color:#dfdbd2"
+style "Unity" {
+
+    UxTabbrowser::background = "transparent linear-gradient(top, shade(@dark_bg_color, 0.96) 0px, shade(@dark_bg_color, 1.4) 100%) left top no-repeat no-repeat"
+    UxTabbrowser::background-insensitive = "@dark_bg_color"
+
+    UxTabbrowser::bar-border-bottom-color= "shade (@dark_bg_color, 1.1)"
+    UxTabbrowser::bar-border-top-color= "shade (@dark_bg_color, 1.09)"
+
+    UxTabbrowser::bar-border-bottom-style= solid
+    UxTabbrowser::bar-border-top-style= solid
+    UxTabbrowser::bar-border-bottom-width= 1
+    UxTabbrowser::bar-border-top-width= 1
+
+    UxTabbrowser::bar-padding-top = 6
+
+
+    UxTabbrowser::tab-background = "transparent linear-gradient(top, shade(@bg_color, 1.4) 0px, @bg_color 50%) left top no-repeat no-repeat"
+    UxTabbrowser::tab-border-top-path = "m 0,0 l 1,0"
+    UxTabbrowser::tab-border-right-path = "M 0,0 0.04,0 C 0.44,0 0.48,0.32 0.52,0.536 0.5614332,0.75973933 0.64,1 1,1"
+    UxTabbrowser::tab-border-bottom-path = "m 0,1 l 1,0"
+    UxTabbrowser::tab-border-left-path = "M 0,1 C 0.36,1 0.44,0.76 0.48,0.536 0.52,0.312 0.56,0 0.96,0 L 1,0"
+
+
+    UxTabbrowser::tab-border-left-color= "shade (@dark_bg_color, 1.1)"
+    UxTabbrowser::tab-border-top-color= "shade (@dark_bg_color, 1.1)"
+    UxTabbrowser::tab-border-right-color= "shade (@dark_bg_color, 1.1)"
+    UxTabbrowser::tab-border-left-width= 1
+    UxTabbrowser::tab-border-top-width= 1
+    UxTabbrowser::tab-border-right-width= 1
+
+    UxTabbrowser::tab-background-active = "rgba(1.0, 1.0, 1.0, 0.5)"
+
+#    UxTabbrowser::tab-overlap = 0
+#    xthickness = 4
+    ythickness = 2
+}
+
+widget "*.primary" style "Unity"

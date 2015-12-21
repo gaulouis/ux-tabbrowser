@@ -3,7 +3,7 @@
 
   <glade-widget-classes>
 
-    <glade-widget-class name="UxTabbrowser" generic-name="tabbrowser" title="Tabbrowser">
+    <glade-widget-class name="UxTabbrowser" generic-name="tabbrowser" title="Tab-browser">
       <post-create-function>glade_ux_tabbrowser_post_create</post-create-function>
       <!--add-child-function>glade_ux_tabbrowser_add_child</add-child-function-->
       <!--remove-child-function>glade_ux_tabbrowser_remove_child</remove-child-function-->
@@ -11,7 +11,7 @@
       <!--child-set-property-function>glade_ux_tabbrowser_set_child_property</child-set-property-function-->
       <!--child-get-property-function>glade_ux_tabbrowser_get_child_property</child-get-property-function-->
       <!--child-verify-function>glade_ux_tabbrowser_child_verify_property</child-verify-function-->
-      <special-child-type>type</special-child-type>
+      <!--special-child-type>type</special-child-type-->
       <!--set-property-function>glade_ux_tabbrowser_set_property</set-property-function-->
       <!--verify-function>glade_ux_tabbrowser_verify_property</verify-function-->
       <!--child-action-activate-function>glade_ux_tabbrowser_child_action_activate</child-action-activate-function-->

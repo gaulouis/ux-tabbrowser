@@ -41,12 +41,23 @@ create_window (void)
     gtk_window_set_default_size(GTK_WINDOW(window), 600, 400);
     gtk_container_set_border_width (GTK_CONTAINER (window), 10);
 
+    /** style */
     tabbrowser = g_object_new(UX_TYPE_TABBROWSER, NULL);
     gtk_widget_set_name(GTK_WIDGET(tabbrowser), "primary");
     gtk_notebook_set_tab_pos(GTK_NOTEBOOK(tabbrowser), GTK_POS_TOP);
-    gtk_notebook_append_page(GTK_NOTEBOOK(tabbrowser), gtk_label_new("Content #1"), gtk_label_new("Label 1"));
-    gtk_notebook_append_page(GTK_NOTEBOOK(tabbrowser), gtk_label_new("Content #2"), gtk_label_new("Label 2"));
-    gtk_notebook_append_page(GTK_NOTEBOOK(tabbrowser), gtk_label_new("Content #3"), gtk_label_new("Label 3"));
+
+    /** pages */
+    GtkWidget *label_1 = gtk_label_new("Label 1");
+    //gtk_label_set_ellipsize(GTK_LABEL(label_1), PANGO_ELLIPSIZE_END);
+    GtkWidget *label_2 = gtk_label_new("Label 2");
+    //gtk_label_set_ellipsize(GTK_LABEL(label_2), PANGO_ELLIPSIZE_END);
+    GtkWidget *label_3 = gtk_label_new("Label 3");
+    //gtk_label_set_ellipsize(GTK_LABEL(label_3), PANGO_ELLIPSIZE_END);
+    gtk_notebook_append_page(GTK_NOTEBOOK(tabbrowser), gtk_label_new("Content #1"), label_1);
+    gtk_notebook_append_page(GTK_NOTEBOOK(tabbrowser), gtk_label_new("Content #2"), label_2);
+    gtk_notebook_append_page(GTK_NOTEBOOK(tabbrowser), gtk_label_new("Content #3"), label_3);
+
+    /** action widget */
     widget = gtk_button_new_from_stock(GTK_STOCK_APPLY);
     gtk_widget_show(widget);
     gtk_notebook_set_action_widget (GTK_NOTEBOOK(tabbrowser), widget, GTK_PACK_START);
@@ -81,14 +92,11 @@ main (int argc, char *argv[])
 	textdomain (GETTEXT_PACKAGE);
 #endif
 	
-	gtk_init (&argc, &argv);
-    const char *rc_style = " \
-      gtk-color-scheme = \"dark_bg_color:#3c3b37\ndark_fg_color:#dfdbd2\" \
-      style \"ux_tabbrowser_style\" { \
-            UxTabbrowser::bar-padding-top = 10 \
-      } \
-      widget_class \"*.<UxTabbrowser>\" style \"ux_tabbrowser_style\"";
-      gtk_rc_parse_string (rc_style);
+    // tmp
+    const gchar *filename = "/home/sam/local/src/ux-tabbrowser/share/themes/Ambiance/gtk-2.0/apps/ux-tabbrowser.rc";
+    gtk_rc_add_default_file(filename);
+    // !tmp
+    gtk_init (&argc, &argv);
 
 	window = create_window ();
     gtk_widget_show_all (window);

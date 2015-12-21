@@ -825,8 +825,8 @@ ux_tabbrowser_size_request (GtkWidget      *widget,
           if (!gtk_widget_get_visible (page->tab_label))
             gtk_widget_show (page->tab_label);
 
-          gtk_widget_size_request (page->tab_label,
-                       &child_requisition);
+          gtk_widget_size_request (page->tab_label, &child_requisition);
+
 
           page->requisition.width =
             child_requisition.width +
@@ -1259,7 +1259,7 @@ ux_tabbrowser_expose (GtkWidget      *widget,
 static gboolean
 ux_tabbrowser_show_arrows (UxTabbrowser *tabbrowser)
 {
-  GtkNotebook *notebook = UX_TABBROWSER(tabbrowser);
+  GtkNotebook *notebook = GTK_NOTEBOOK(tabbrowser);
   gboolean show_arrow = FALSE;
   GList *children;
 
@@ -3762,6 +3762,9 @@ ux_tabbrowser_paint (GtkWidget    *widget,
   gboolean is_rtl;
   gint tab_pos;
   gint padding_top;
+  gboolean is_primary = FALSE;
+  if (0==g_ascii_strcasecmp("primary", gtk_widget_get_name(widget)))
+      is_primary = TRUE;
 
   gtk_widget_style_get(widget, "bar-padding-top", &padding_top, NULL);
 
@@ -3857,7 +3860,25 @@ ux_tabbrowser_paint (GtkWidget    *widget,
     }
     }
 
-    // draw a TabBar backgrund
+#if 0
+  // draw a TabBar backgrund
+  if (is_primary) {
+      ux_paint_box (widget->style, widget->window,
+             gtk_widget_get_state(widget), GTK_SHADOW_OUT,
+             area, widget, "notebook",
+             area->x, area->y, area->width, page->allocation.height+padding_top);
+  }
+
+  // The body of notebok
+  if (!is_primary) {
+      gtk_paint_box_gap (widget->style, widget->window,
+                 GTK_STATE_NORMAL, GTK_SHADOW_OUT,
+                 area, widget, "notebook",
+                 x, y, width, height,
+                 tab_pos, gap_x, gap_width);
+  }
+
+#else
   gtk_paint_box (widget->style, widget->window,
              gtk_widget_get_state(widget), GTK_SHADOW_OUT,
              area, widget, "notebook",
@@ -3869,6 +3890,7 @@ ux_tabbrowser_paint (GtkWidget    *widget,
              area, widget, "notebook",
              x, y, width, height,
              tab_pos, gap_x, gap_width);
+#endif
 
   showarrow = FALSE;
   children = ux_tabbrowser_search_page (tabbrowser, NULL, step, TRUE);
