@@ -54,7 +54,7 @@ void ux_graphics_path_set_cr_path(UxGraphicsData *graphics, cairo_path_t *cr_pat
 UxGraphicsData *ux_graphics_stroke_new()
 {
     UxGraphicsData *graphics = g_new(UxGraphicsData, 1);
-    ux_graphics_stroke_init(graphics, NULL, 1.0, CAIRO_LINE_CAP_ROUND, CAIRO_LINE_JOIN_MITER, 1.0);
+    ux_graphics_stroke_init(graphics, NULL, 1.0, CAIRO_LINE_CAP_BUTT, CAIRO_LINE_JOIN_MITER, 1.0);
     return graphics;
 }
 void ux_graphics_stroke_init(UxGraphicsData *graphics,

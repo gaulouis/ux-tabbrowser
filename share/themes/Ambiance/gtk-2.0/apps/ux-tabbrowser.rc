@@ -15,7 +15,7 @@ style "Unity" {
     UxTabbrowser::bar-border-bottom-width= 1
     UxTabbrowser::bar-border-top-width= 1
 
-    UxTabbrowser::bar-padding-top = 6
+    UxTabbrowser::bar-padding-top = 5
 
 
     UxTabbrowser::tab-background = "transparent linear-gradient(top, shade(@bg_color, 1.4) 0px, @bg_color 50%) left top no-repeat no-repeat"
@@ -25,18 +25,33 @@ style "Unity" {
     UxTabbrowser::tab-border-left-path = "M 0,1 C 0.36,1 0.44,0.76 0.48,0.536 0.52,0.312 0.56,0 0.96,0 L 1,0"
 
 
+#    ....
+#    UxTabbrowser::tab-border-color = "transparent"
+#    UxTabbrowser::tab-border-image = "linear-gradient(top, shade(@dark_bg_color, 0.8) 0px, shade(@dark_bg_color, 1.1) 100%) 100% 100% 100% 100% stretch stretch"
+#    UxTabbrowser::tab-border-image-source = "linear-gradient(top, shade(@dark_bg_color, 0.8) 0px, shade(@dark_bg_color, 1.1) 100%)"
+#    UxTabbrowser::tab-border-image-width = 100% 100% 100% 100%
+#    UxTabbrowser::tab-border-image-repeat = stretch|repeat|round|initial|inherit
+
+
+#    UxTabbrowser::tab-border-width = 4
+#    UxTabbrowser::tab-border-pattern= "linear-gradient(top, shade(@dark_bg_color, 0.8) 0px, shade(@dark_bg_color, 1.1) 100%)"
     UxTabbrowser::tab-border-left-color= "shade (@dark_bg_color, 1.1)"
     UxTabbrowser::tab-border-top-color= "shade (@dark_bg_color, 1.1)"
     UxTabbrowser::tab-border-right-color= "shade (@dark_bg_color, 1.1)"
-    UxTabbrowser::tab-border-left-width= 1
-    UxTabbrowser::tab-border-top-width= 1
-    UxTabbrowser::tab-border-right-width= 1
+    UxTabbrowser::tab-border-left-width= 2
+    UxTabbrowser::tab-border-top-width= 2
+    UxTabbrowser::tab-border-right-width= 2
 
     UxTabbrowser::tab-background-active = "rgba(1.0, 1.0, 1.0, 0.5)"
 
-#    UxTabbrowser::tab-overlap = 0
-#    xthickness = 4
-    ythickness = 2
+    GtkNotebook::tab-overlap = 26
+    xthickness = 18 # default 2
+    ythickness = 0  # default 2
+
+    engine "murrine" {
+        focusstyle = 0
+    }
+
 }
 
 widget "*.primary" style "Unity"

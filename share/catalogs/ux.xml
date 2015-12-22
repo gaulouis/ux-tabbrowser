@@ -52,7 +52,7 @@
 
   </glade-widget-classes>
 
-  <glade-widget-group name="ux-containers" title="Containers">
+  <glade-widget-group name="ux-containers" title="UX">
     <glade-widget-class-ref name="UxTabbrowser"/>
   </glade-widget-group>
 

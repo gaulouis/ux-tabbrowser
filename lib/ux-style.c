@@ -597,6 +597,7 @@ void ux_style_init(UxStyle *style)
 {
     style->background = NULL;
     style->border = NULL;
+    style->paint = UX_STYLE_PAINT_TYPE_FILL_AND_STROKE;
     style->color = NULL;
     style->padding = NULL;
     //...
@@ -718,4 +719,147 @@ ux_paint_box(GtkStyle           *style,
 
 
     //gtk_paint_box(style, window, state_type, shadow_type, area, widget, detail, x, y, width, height);
+}
+
+void
+ux_paint_extension(GtkStyle           *style,
+                   GdkWindow          *window,
+                   GtkStateType        state_type,
+                   GtkShadowType       shadow_type,
+                   const GdkRectangle *area,
+                   GtkWidget          *widget,
+                   const gchar        *detail,
+                   gint                x,
+                   gint                y,
+                   gint                width,
+                   gint                height,
+                   GtkPositionType     gap_side)
+{
+
+    ux_rc_parser_set_context(widget);
+    UxStyleBackground *bg_active_property=NULL;
+    UxStyleBackground *bg_property = NULL;
+    UxStylePath *path_top_property = NULL;
+    UxStylePath *path_right_property = NULL;
+    UxStylePath *path_bottom_property = NULL;
+    UxStylePath *path_left_property = NULL;
+
+
+    UxStyleColor *border_top_color_property = NULL;
+    UxStyleColor *border_right_color_property = NULL;
+    UxStyleColor *border_bottom_color_property = NULL;
+    UxStyleColor *border_left_color_property = NULL;
+
+    gint border_top_width_property = 0;
+    gint border_right_width_property = 0;
+    gint border_bottom_width_property = 0;
+    gint border_left_width_property = 0;
+
+    gtk_widget_style_get (widget,
+                          "tab-background-active", &bg_active_property,
+                          NULL
+    );
+    gtk_widget_style_get (widget,
+                          "tab-background", &bg_property,
+                          "tab-border-top-path", &path_top_property,
+                          "tab-border-right-path", &path_right_property,
+                          "tab-border-bottom-path", &path_bottom_property,
+                          "tab-border-left-path", &path_left_property,
+
+                          "tab-border-top-color", &border_top_color_property,
+                          "tab-border-right-color", &border_right_color_property,
+                          "tab-border-bottom-color", &border_bottom_color_property,
+                          "tab-border-left-color", &border_left_color_property,
+
+                          NULL);
+    if (state_type!=GTK_STATE_ACTIVE) {
+        gtk_widget_style_get (widget,
+                              "tab-border-top-width", &border_top_width_property,
+                              "tab-border-right-width", &border_right_width_property,
+                              "tab-border-bottom-width", &border_bottom_width_property,
+                              "tab-border-left-width", &border_left_width_property,
+                              NULL
+        );
+    }
+
+    ux_rc_parser_set_context(NULL);
+
+    UxDisplayContext *context = ux_display_context_new(widget);
+    context->window = window;
+    UxDisplayViewport *viewport = ux_display_viewport_new(context);
+    viewport->x = x;
+    viewport->y = y;
+    viewport->width = width;
+    viewport->height = height;
+
+    UxStyle ux_style;
+    ux_style_init(&ux_style);
+    ux_style.paint = UX_STYLE_PAINT_TYPE_STROKE_AND_FILL;
+    ux_style.border = ux_style_border_new();
+    if (path_top_property)
+      ux_style.border->path.top = *path_top_property;
+    if (path_right_property)
+      ux_style.border->path.right = *path_right_property;
+    if (path_bottom_property)
+      ux_style.border->path.bottom = *path_bottom_property;
+    if (path_left_property)
+      ux_style.border->path.left = *path_left_property;
+
+    if (border_top_color_property)
+      ux_style.border->color.top = *border_top_color_property;
+    if (border_right_color_property)
+      ux_style.border->color.right = *border_right_color_property;
+    if (border_bottom_color_property)
+      ux_style.border->color.bottom = *border_bottom_color_property;
+    if (border_left_color_property)
+      ux_style.border->color.left = *border_left_color_property;
+
+
+    if (border_top_width_property)
+      ux_style.border->width.top.value = border_top_width_property;
+    if (border_right_width_property)
+      ux_style.border->width.right.value = border_right_width_property;
+    if (border_bottom_width_property)
+      ux_style.border->width.bottom.value = border_bottom_width_property;
+    if (border_left_width_property)
+      ux_style.border->width.left.value = border_left_width_property;
+
+    UxStylePadding *padding = ux_style_padding_new();
+    gint padding_top_property = 0;
+//          gint padding_right_property = 0;
+//          gint padding_bottom_property = 0;
+//          gint padding_left_property = 0;
+
+    gtk_widget_style_get (widget,
+                          "bar-padding-top", &padding_top_property,
+//                                "bar-padding-right", &padding_right_property,
+//                                "bar-padding-bottom", &padding_bottom_property,
+//                                "bar-padding-left", &padding_left_property,
+                          NULL);
+    if (padding_top_property)
+        padding->top.value = padding_top_property;
+//          if (padding_right_property)
+//              padding->right.value = padding_right_property;
+//          if (padding_bottom_property)
+//              padding->bottom.value = padding_bottom_property;
+//          if (padding_left_property)
+//              padding->left.value = padding_left_property;
+
+
+    if (state_type==GTK_STATE_ACTIVE) {
+        //ux_style.background = bg_active_property;
+    } else {
+        ux_style.background = bg_property;
+    }
+    ux_style.padding = padding;
+  //ux_style...
+    UxDisplayShape *box = ux_display_shape_new(viewport, NULL);// UxDisplayObject *parent
+    ux_display_shape_set_style(box, &ux_style);
+
+    ux_display_viewport_set_root(viewport, (UxDisplayObject *)box);
+
+    //ux_display_object_render(box, &ux_style);
+    ux_display_shape_render(box);
+    // ----------------
+
 }

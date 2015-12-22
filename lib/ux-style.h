@@ -44,7 +44,9 @@ typedef struct _UxStyleImage               UxStyleImage;
 typedef enum   _UxStyleImageType           UxStyleImageType;
 typedef struct _UxStyleImageLinearGradient UxStyleImageLinearGradient;
 typedef struct _UxStyleBackground          UxStyleBackground;
+typedef enum   _UxStylePaintType           UxStylePaintType;
 typedef struct _UxStyleBorder              UxStyleBorder;
+typedef struct _UxStyleBorderImage         UxStyleBorderImage;
 typedef struct _UxStylePathElement         UxStylePathElement;
 typedef struct _UxStylePath                UxStylePath;
 
@@ -91,6 +93,12 @@ void ux_style_color_get_gdk(UxStyleColor *color, GdkColor *gdk);
 void mwb_murrine_rgb_to_hls (gdouble *r, gdouble *g, gdouble *b);
 void mwb_murrine_hls_to_rgb (gdouble *h, gdouble *l, gdouble *s);
 void mwb_murrine_shade (const MurrineRGB *a, float k, MurrineRGB *b);
+
+enum _UxStylePaintType
+{
+    UX_STYLE_PAINT_TYPE_STROKE_AND_FILL,
+    UX_STYLE_PAINT_TYPE_FILL_AND_STROKE
+};
 
 struct _UxStyleColor
 {
@@ -283,6 +291,12 @@ typedef struct _UxStylePadding
     UxStyleLength left;
 } UxStylePadding;
 
+struct _UxStyleBorderImage
+{
+    UxStyleImage source;
+    //UxStyleBorderRepeat repeat; //stretch
+};
+
 typedef struct _UxStyleBorderWidth
 {
     UxStyleLength top;
@@ -309,18 +323,18 @@ typedef struct _UxStyleBorderPath
 
 struct _UxStyleBorder
 {
-    //UxStyleBorderStyle style;
+    //UxStyleBorderStyle style;// solid, dashed
     UxStyleBorderColor color;
     UxStyleBorderWidth width;
     UxStyleBorderPath  path;
-    //UxStyleImage image;
-    //UxStyleImageSlice slice;
-    //UxStyleImageSlice slice;
+    UxStyleBorderImage image;
+    //UxStyleBorderSlice slice;
 };
 
 typedef struct _UxStyle UxStyle;
 struct _UxStyle
 {
+    UxStylePaintType *paint;
     UxStyleBackground *background;
     UxStyleColor *color;
     //  position, column, text-justify, align, font, transform, transition
@@ -335,10 +349,10 @@ struct _UxStyle
 } ;
 void                ux_style_init(UxStyle *style);
 void                ux_style_border_init(UxStyleBorder *border);
-UxStyleBorder     *ux_style_border_new();
+UxStyleBorder      *ux_style_border_new();
 void                ux_style_border_free(UxStyleBorder *border);
 void                ux_style_padding_init(UxStylePadding *padding);
-UxStylePadding*    ux_style_padding_new();
+UxStylePadding     *ux_style_padding_new();
 void                ux_style_padding_free(UxStylePadding *padding);
 
 GType               ux_style_color_get_type              (void);
@@ -351,17 +365,30 @@ GType               ux_style_path_get_type               (void);
 void                ux_style_path_init(UxStylePath *path);
 //void                ux_style_path_free(UxStylePath *path);
 
-void                mwb_paint_box(GtkStyle           *style,
-                                  GdkWindow          *window,
-                                  GtkStateType        state_type,
-                                  GtkShadowType       shadow_type,
-                                  const GdkRectangle *area,
-                                  GtkWidget          *widget,
-                                  const gchar        *detail,
-                                  gint                x,
-                                  gint                y,
-                                  gint                width,
-                                  gint                height);
+void                ux_paint_box(GtkStyle           *style,
+                                 GdkWindow          *window,
+                                 GtkStateType        state_type,
+                                 GtkShadowType       shadow_type,
+                                 const GdkRectangle *area,
+                                 GtkWidget          *widget,
+                                 const gchar        *detail,
+                                 gint                x,
+                                 gint                y,
+                                 gint                width,
+                                 gint                height);
+
+void                ux_paint_extension(GtkStyle           *style,
+                                       GdkWindow          *window,
+                                       GtkStateType        state_type,
+                                       GtkShadowType       shadow_type,
+                                       const GdkRectangle *area,
+                                       GtkWidget          *widget,
+                                       const gchar        *detail,
+                                       gint                x,
+                                       gint                y,
+                                       gint                width,
+                                       gint                height,
+                                       GtkPositionType     gap_side);
 
 
 G_END_DECLS

@@ -20,6 +20,7 @@
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
+#define IS_PRIMARY TRUE
 
 //#include "mwb-types.h"
 //#include "mwb-enums.h"
@@ -30,6 +31,12 @@
 //#include "mwb-graphics.h"
 //#include "mwb-display.h"
 //#include "mwb-notebook_p.h"
+
+#include "ux-style.h"
+#include "ux-parser.h"
+#include "ux-rc.h"
+#include "ux-graphics.h"
+#include "ux-display.h"
 #include "ux-tabbrowser.h"
 
 
@@ -412,6 +419,139 @@ ux_tabbrowser_class_init (UxTabbrowserClass *klass)
   widget_class->focus_in_event = ux_tabbrowser_focus_in;
   widget_class->focus_out_event = ux_tabbrowser_focus_out;
 
+
+  /**
+   * UxTabrowser:background:
+   *
+   * The "background" property defines the background back the tabs.
+   *
+   * Since: 2.10
+   */
+  gtk_widget_class_install_style_property_parser(widget_class,
+                                                 g_param_spec_boxed("background",
+                                                                    "Background",
+                                                                    "Display a background",
+                                                                    UX_TYPE_STYLE_BACKGROUND,
+                                                                    G_PARAM_WRITABLE|G_PARAM_READABLE|G_PARAM_STATIC_NAME|G_PARAM_STATIC_NICK|G_PARAM_STATIC_BLURB),
+                                                 ux_rc_parse_background);
+  /**
+   * UxTabrowser:background:
+   *
+   * The "background" property defines the background back the tabs.
+   *
+   * Since: 2.10
+   */
+  gtk_widget_class_install_style_property_parser(widget_class,
+                                                 g_param_spec_boxed("background-insensitive",
+                                                                    "Background insensitive",
+                                                                    "Display a insensitive background",
+                                                                    UX_TYPE_STYLE_BACKGROUND,
+                                                                    G_PARAM_WRITABLE|G_PARAM_READABLE|G_PARAM_STATIC_NAME|G_PARAM_STATIC_NICK|G_PARAM_STATIC_BLURB),
+                                                 ux_rc_parse_background);
+
+  /**
+   * UxTabrowser:bar-border:
+   *
+   * The "bar-border" property defines the background back the tabs.
+   *
+   * Since: 2.10
+   */
+  gtk_widget_class_install_style_property_parser(widget_class,
+                                          g_param_spec_boxed("bar-border-top-color",
+                                                             "TabBar border top color",
+                                                             "Display a border",
+                                                             UX_TYPE_STYLE_COLOR,
+                                                             G_PARAM_WRITABLE|G_PARAM_READABLE|G_PARAM_STATIC_NAME|G_PARAM_STATIC_NICK|G_PARAM_STATIC_BLURB
+                                                             ),
+                                          ux_rc_parse_color
+  );
+  /**
+   * UxTabrowser:bar-border:
+   *
+   * The "bar-border" property defines the background back the tabs.
+   *
+   * Since: 2.10
+   */
+  gtk_widget_class_install_style_property_parser(widget_class,
+                                          g_param_spec_boxed("bar-border-bottom-color",
+                                                             "TabBar border bottom color",
+                                                             "Display a border",
+                                                             UX_TYPE_STYLE_COLOR,
+                                                             G_PARAM_WRITABLE|G_PARAM_READABLE|G_PARAM_STATIC_NAME|G_PARAM_STATIC_NICK|G_PARAM_STATIC_BLURB
+                                                             ),
+                                          ux_rc_parse_color
+  );
+
+
+  /**
+   * UxTabrowser:bar-border:
+   *
+   * The "bar-border" property defines the background back the tabs.
+   *
+   * Since: 2.10
+   */
+  gtk_widget_class_install_style_property(widget_class,
+                                          g_param_spec_int("bar-border-top-width",
+                                                           "TabBar border width",
+                                                           "Display a border",
+                                                           0,
+                                                           10,
+                                                           0,
+                                                           G_PARAM_WRITABLE|G_PARAM_READABLE|G_PARAM_STATIC_NAME|G_PARAM_STATIC_NICK|G_PARAM_STATIC_BLURB
+                                          )
+  );
+  /**
+   * UxTabrowser:bar-border:
+   *
+   * The "bar-border" property defines the background back the tabs.
+   *
+   * Since: 2.10
+   */
+  gtk_widget_class_install_style_property(widget_class,
+                                          g_param_spec_int("bar-border-right-width",
+                                                           "TabBar border width",
+                                                           "Display a border",
+                                                           0,
+                                                           10,
+                                                           0,
+                                                           G_PARAM_WRITABLE|G_PARAM_READABLE|G_PARAM_STATIC_NAME|G_PARAM_STATIC_NICK|G_PARAM_STATIC_BLURB
+                                          )
+  );
+  /**
+   * UxTabrowser:bar-border:
+   *
+   * The "bar-border" property defines the background back the tabs.
+   *
+   * Since: 2.10
+   */
+  gtk_widget_class_install_style_property(widget_class,
+                                          g_param_spec_int("bar-border-bottom-width",
+                                                           "TabBar border width",
+                                                           "Display a border",
+                                                           0,
+                                                           10,
+                                                           0,
+                                                           G_PARAM_WRITABLE|G_PARAM_READABLE|G_PARAM_STATIC_NAME|G_PARAM_STATIC_NICK|G_PARAM_STATIC_BLURB
+                                          )
+  );
+  /**
+   * UxTabrowser:bar-border:
+   *
+   * The "bar-border" property defines the background back the tabs.
+   *
+   * Since: 2.10
+   */
+  gtk_widget_class_install_style_property(widget_class,
+                                          g_param_spec_int("bar-border-left-width",
+                                                           "TabBar border width",
+                                                           "Display a border",
+                                                           0,
+                                                           10,
+                                                           0,
+                                                           G_PARAM_WRITABLE|G_PARAM_READABLE|G_PARAM_STATIC_NAME|G_PARAM_STATIC_NICK|G_PARAM_STATIC_BLURB
+                                          )
+  );
+
   gtk_widget_class_install_style_property(widget_class,
                                           g_param_spec_int("bar-padding-top",
                                                            "Bar padding top",
@@ -420,6 +560,200 @@ ux_tabbrowser_class_init (UxTabbrowserClass *klass)
                                                            50,
                                                            0,
                                                            G_PARAM_WRITABLE|G_PARAM_READABLE|G_PARAM_STATIC_NAME|G_PARAM_STATIC_NICK|G_PARAM_STATIC_BLURB));
+
+
+  /**
+   * UxTabrowser:tab-background:
+   *
+   * The "background" property defines the background back the tabs.
+   *
+   * Since: 2.10
+   */
+  gtk_widget_class_install_style_property_parser(widget_class,
+                                                 g_param_spec_boxed("tab-background",
+                                                                    "Background tab",
+                                                                    "Display a background on tab",
+                                                                    UX_TYPE_STYLE_BACKGROUND,
+                                                                    G_PARAM_WRITABLE|G_PARAM_READABLE|G_PARAM_STATIC_NAME|G_PARAM_STATIC_NICK|G_PARAM_STATIC_BLURB),
+                                                 ux_rc_parse_background);
+  gtk_widget_class_install_style_property_parser(widget_class,
+                                                 g_param_spec_boxed("tab-background-active",
+                                                                    "Background tab",
+                                                                    "Display a background on tab",
+                                                                    UX_TYPE_STYLE_BACKGROUND,
+                                                                    G_PARAM_WRITABLE|G_PARAM_READABLE|G_PARAM_STATIC_NAME|G_PARAM_STATIC_NICK|G_PARAM_STATIC_BLURB),
+                                                 ux_rc_parse_background);
+  /**
+   * UxTabrowser:tab-border-top-path:
+   *
+   * The "path" property defines the border path of the tabs.
+   *
+   * Since: 2.10
+   */
+  gtk_widget_class_install_style_property_parser(widget_class,
+                                                 g_param_spec_boxed("tab-border-top-path",
+                                                                    "Path border top",
+                                                                    "Draw a border on top",
+                                                                    UX_TYPE_STYLE_PATH,
+                                                                    G_PARAM_WRITABLE|G_PARAM_READABLE|G_PARAM_STATIC_NAME|G_PARAM_STATIC_NICK|G_PARAM_STATIC_BLURB),
+                                                 ux_rc_parse_path);
+
+  /**
+   * UxTabrowser:tab-border-right-path:
+   *
+   * The "path" property defines the border path of the tabs.
+   *
+   * Since: 2.10
+   */
+  gtk_widget_class_install_style_property_parser(widget_class,
+                                                 g_param_spec_boxed("tab-border-right-path",
+                                                                    "Path border right",
+                                                                    "Draw a border on right",
+                                                                    UX_TYPE_STYLE_PATH,
+                                                                    G_PARAM_WRITABLE|G_PARAM_READABLE|G_PARAM_STATIC_NAME|G_PARAM_STATIC_NICK|G_PARAM_STATIC_BLURB),
+                                                 ux_rc_parse_path);
+  /**
+   * UxTabrowser:tab-border-bottom-path:
+   *
+   * The "path" property defines the border path of the tabs.
+   *
+   * Since: 2.10
+   */
+  gtk_widget_class_install_style_property_parser(widget_class,
+                                                 g_param_spec_boxed("tab-border-bottom-path",
+                                                                    "Path border bottom",
+                                                                    "Draw a border on bottom",
+                                                                    UX_TYPE_STYLE_PATH,
+                                                                    G_PARAM_WRITABLE|G_PARAM_READABLE|G_PARAM_STATIC_NAME|G_PARAM_STATIC_NICK|G_PARAM_STATIC_BLURB),
+                                                 ux_rc_parse_path);
+  /**
+   * UxTabrowser:tab-border-left-path:
+   *
+   * The "path" property defines the border path of the tabs.
+   *
+   * Since: 2.10
+   */
+  gtk_widget_class_install_style_property_parser(widget_class,
+                                                 g_param_spec_boxed("tab-border-left-path",
+                                                                    "Path border left",
+                                                                    "Draw a border on left",
+                                                                    UX_TYPE_STYLE_PATH,
+                                                                    G_PARAM_WRITABLE|G_PARAM_READABLE|G_PARAM_STATIC_NAME|G_PARAM_STATIC_NICK|G_PARAM_STATIC_BLURB),
+                                                 ux_rc_parse_path);
+
+  /**
+   * UxTabrowser:tab-border-image:
+   *
+   * The "path" property defines the border path of the tabs.
+   *
+   * Since: 2.10
+   * /
+  gtk_widget_class_install_style_property_parser(widget_class,
+                                                 g_param_spec_boxed("tab-border-image",
+                                                                    "Border image",
+                                                                    "Display a border on tab",
+                                                                    UX_TYPE_STYLE_BACKGROUND,
+                                                                    G_PARAM_WRITABLE|G_PARAM_READABLE|G_PARAM_STATIC_NAME|G_PARAM_STATIC_NICK|G_PARAM_STATIC_BLURB),
+                                                 ux_rc_parse_background);
+  */
+
+  /**
+   * UxTabrowser:tab-border-top-color:
+   *
+   * The "path" property defines the border path of the tabs.
+   *
+   * Since: 2.10
+   */
+  gtk_widget_class_install_style_property_parser(widget_class,
+                                          g_param_spec_boxed("tab-border-top-color",
+                                                             "Color border top",
+                                                             "Draw a border on top",
+                                                             UX_TYPE_STYLE_COLOR,
+                                                             G_PARAM_WRITABLE|G_PARAM_READABLE|G_PARAM_STATIC_NAME|G_PARAM_STATIC_NICK|G_PARAM_STATIC_BLURB),
+                                          ux_rc_parse_color);
+
+  /**
+   * UxTabrowser:tab-border-right-color:
+   *
+   * The "path" property defines the border path of the tabs.
+   *
+   * Since: 2.10
+   */
+  gtk_widget_class_install_style_property_parser(widget_class,
+                                          g_param_spec_boxed("tab-border-right-color",
+                                                             "Color border right",
+                                                             "Draw a border on right",
+                                                             UX_TYPE_STYLE_COLOR,
+                                                             G_PARAM_WRITABLE|G_PARAM_READABLE|G_PARAM_STATIC_NAME|G_PARAM_STATIC_NICK|G_PARAM_STATIC_BLURB),
+                                                 ux_rc_parse_color);
+  /**
+   * UxTabrowser:tab-border-bottom-color:
+   *
+   * The "path" property defines the border path of the tabs.
+   *
+   * Since: 2.10
+   */
+  gtk_widget_class_install_style_property_parser(widget_class,
+                                          g_param_spec_boxed("tab-border-bottom-color",
+                                                             "Color border bottom",
+                                                             "Draw a border on bottom",
+                                                             UX_TYPE_STYLE_COLOR,
+                                                             G_PARAM_WRITABLE|G_PARAM_READABLE|G_PARAM_STATIC_NAME|G_PARAM_STATIC_NICK|G_PARAM_STATIC_BLURB),
+                                                 ux_rc_parse_color);
+  /**
+   * UxTabrowser:tab-border-left-color:
+   *
+   * The "path" property defines the border path of the tabs.
+   *
+   * Since: 2.10
+   */
+  gtk_widget_class_install_style_property_parser(widget_class,
+                                           g_param_spec_boxed("tab-border-left-color",
+                                                              "Color border left",
+                                                              "Draw a border on left",
+                                                              UX_TYPE_STYLE_COLOR,
+                                                              G_PARAM_WRITABLE|G_PARAM_READABLE|G_PARAM_STATIC_NAME|G_PARAM_STATIC_NICK|G_PARAM_STATIC_BLURB),
+                                                 ux_rc_parse_color);
+  /**
+   * UxTabrowser:tab-border-width:
+   *
+   * The "tab-border-width" property defines the bordre width the tabs.
+   *
+   * Since: 2.10
+   */
+  gtk_widget_class_install_style_property(widget_class,
+                                          g_param_spec_int("tab-border-top-width",
+                                                           "Tab border width",
+                                                           "Display a border",
+                                                           0,
+                                                           10,
+                                                           0,
+                                                           G_PARAM_WRITABLE|G_PARAM_READABLE|G_PARAM_STATIC_NAME|G_PARAM_STATIC_NICK|G_PARAM_STATIC_BLURB));
+  gtk_widget_class_install_style_property(widget_class,
+                                          g_param_spec_int("tab-border-right-width",
+                                                           "Tab border width",
+                                                           "Display a border",
+                                                           0,
+                                                           10,
+                                                           0,
+                                                           G_PARAM_WRITABLE|G_PARAM_READABLE|G_PARAM_STATIC_NAME|G_PARAM_STATIC_NICK|G_PARAM_STATIC_BLURB));
+  gtk_widget_class_install_style_property(widget_class,
+                                          g_param_spec_int("tab-border-bottom-width",
+                                                           "Tab border width",
+                                                           "Display a border",
+                                                           0,
+                                                           10,
+                                                           0,
+                                                           G_PARAM_WRITABLE|G_PARAM_READABLE|G_PARAM_STATIC_NAME|G_PARAM_STATIC_NICK|G_PARAM_STATIC_BLURB));
+  gtk_widget_class_install_style_property(widget_class,
+                                          g_param_spec_int("tab-border-left-width",
+                                                           "Tab border width",
+                                                           "Display a border",
+                                                           0,
+                                                           10,
+                                                           0,
+                                                           G_PARAM_WRITABLE|G_PARAM_READABLE|G_PARAM_STATIC_NAME|G_PARAM_STATIC_NICK|G_PARAM_STATIC_BLURB));
+
 
 }
 
@@ -3762,7 +4096,7 @@ ux_tabbrowser_paint (GtkWidget    *widget,
   gboolean is_rtl;
   gint tab_pos;
   gint padding_top;
-  gboolean is_primary = FALSE;
+  gboolean is_primary = IS_PRIMARY;
   if (0==g_ascii_strcasecmp("primary", gtk_widget_get_name(widget)))
       is_primary = TRUE;
 
@@ -3860,13 +4194,13 @@ ux_tabbrowser_paint (GtkWidget    *widget,
     }
     }
 
-#if 0
   // draw a TabBar backgrund
   if (is_primary) {
       ux_paint_box (widget->style, widget->window,
-             gtk_widget_get_state(widget), GTK_SHADOW_OUT,
-             area, widget, "notebook",
-             area->x, area->y, area->width, page->allocation.height+padding_top);
+                 gtk_widget_get_state(widget), GTK_SHADOW_OUT,
+                 area, widget, "notebook",
+                 area_bar.x, area_bar.y,
+                 area_bar.width, area_bar.height);
   }
 
   // The body of notebok
@@ -3877,20 +4211,6 @@ ux_tabbrowser_paint (GtkWidget    *widget,
                  x, y, width, height,
                  tab_pos, gap_x, gap_width);
   }
-
-#else
-  gtk_paint_box (widget->style, widget->window,
-             gtk_widget_get_state(widget), GTK_SHADOW_OUT,
-             area, widget, "notebook",
-             area_bar.x, area_bar.y,
-             area_bar.width, area_bar.height);
-
-  gtk_paint_box_gap (widget->style, widget->window,
-             GTK_STATE_NORMAL, GTK_SHADOW_OUT,
-             area, widget, "notebook",
-             x, y, width, height,
-             tab_pos, gap_x, gap_width);
-#endif
 
   showarrow = FALSE;
   children = ux_tabbrowser_search_page (tabbrowser, NULL, step, TRUE);
@@ -3935,6 +4255,7 @@ ux_tabbrowser_draw_tab (UxTabbrowser    *tabbrowser,
   GtkPositionType gap_side;
   GdkWindow *window;
   GtkWidget *widget;
+  gboolean is_primary = IS_PRIMARY;
 
   if (!NOTEBOOK_IS_TAB_LABEL_PARENT (notebook, page) ||
       !gtk_widget_get_mapped (page->tab_label) ||
@@ -3943,6 +4264,9 @@ ux_tabbrowser_draw_tab (UxTabbrowser    *tabbrowser,
 
   widget = GTK_WIDGET (notebook);
   priv = GTK_NOTEBOOK_GET_PRIVATE (notebook);
+
+  if (0==g_ascii_strcasecmp("primary", gtk_widget_get_name(widget)))
+      is_primary = TRUE;
 
   if (priv->operation == DRAG_OPERATION_REORDER && page == notebook->cur_page)
     window = priv->drag_window;
@@ -3963,12 +4287,21 @@ ux_tabbrowser_draw_tab (UxTabbrowser    *tabbrowser,
       else
     state_type = GTK_STATE_ACTIVE;
 
-      gtk_paint_extension (widget->style, window,
-               state_type, GTK_SHADOW_OUT,
-               area, widget, "tab",
-               page_area.x, page_area.y,
-               page_area.width, page_area.height,
-               gap_side);
+      if (!is_primary) {
+        gtk_paint_extension (widget->style, window,
+                             state_type, GTK_SHADOW_OUT,
+                             area, widget, "tab",
+                             page_area.x, page_area.y,
+                             page_area.width, page_area.height,
+                             gap_side);
+      } else {
+          ux_paint_extension (widget->style, window,
+                              state_type, GTK_SHADOW_OUT,
+                              area, widget, "tab",
+                              page_area.x, page_area.y,
+                              page_area.width, page_area.height,
+                              gap_side);
+      }
     }
 }
 

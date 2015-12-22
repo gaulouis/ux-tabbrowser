@@ -33,12 +33,12 @@ gboolean ux_rc_parse_color(const GParamSpec *pspec,
  * Also, you can superpose backgrounds by adding rules separated by a coma
  * Example:
  * \code
- * MwbNotebook::background = "#FF0000"
- * MwbNotebook::background = "rgba(1.0, 1.0, 1.0, 1.0) none"
- * MwbNotebook::background = "rgba(255, 255, 255, 255) url('img.png') left top repeat no-repeat"
- * MwbNotebook::background = "transparent url('img.png') center no-repeat"
- * MwbNotebook::background = "transparent url('img.png') center no-repeat, transparent url('img.png') center no-repeat"
- * MwbNotebook::background = "transparent linear-gradient(0px #00FF00, 100% #FF0000) left top"
+ * UxTabrowser::background = "#FF0000"
+ * UxTabrowser::background = "rgba(1.0, 1.0, 1.0, 1.0) none"
+ * UxTabrowser::background = "rgba(255, 255, 255, 255) url('img.png') left top repeat no-repeat"
+ * UxTabrowser::background = "transparent url('img.png') center no-repeat"
+ * UxTabrowser::background = "transparent url('img.png') center no-repeat, transparent url('img.png') center no-repeat"
+ * UxTabrowser::background = "transparent linear-gradient(0px #00FF00, 100% #FF0000) left top"
  * \endcode
  *
  * @brief ux_rc_parser_background
@@ -57,11 +57,34 @@ gboolean ux_rc_parse_background(const GParamSpec *pspec,
  * Also, you can superpose backgrounds by adding rules separated by a coma
  * Example:
  * \code
- * MwbNotebookPage::border-path = "m 0.0,0.0 l 1.0,0.0 1.0,1.0 0.0,1.0 z"
- * MwbNotebookPage::border-top-path = ""
- * MwbNotebookPage::border-right-path = ""
- * MwbNotebookPage::border-bottom-path = ""
- * MwbNotebookPage::border-left-path = ""
+ * UxTabrowser::tab-border-image = "linear-gradient(0px #00FF00, 100% #FF0000) left top"
+ * UxTabrowser::tab-border-image-source = "url()" TODO
+ * UxTabrowser::tab-border-image-repeat = "" TODO
+ *
+ * \endcode
+ *
+ * @brief ux_rc_parser_background
+ * @param pspec GParamSpec
+ * @param rc_string GString
+ * @param property_value GValue
+ * @return
+ *
+gboolean ux_rc_parse_border_image(const GParamSpec *pspec,
+                                  const GString    *rc_string,
+                                  GValue           *property_value);
+*/
+
+/**
+ * Parse GtkRC rule
+ * See CSS3 syntaxe for more explanation.
+ * Also, you can superpose backgrounds by adding rules separated by a coma
+ * Example:
+ * \code
+ * UxTabrowserPage::border-path = "m 0.0,0.0 l 1.0,0.0 1.0,1.0 0.0,1.0 z"
+ * UxTabrowserPage::border-top-path = ""
+ * UxTabrowserPage::border-right-path = ""
+ * UxTabrowserPage::border-bottom-path = ""
+ * UxTabrowserPage::border-left-path = ""
  * \endcode
  *
  * @brief ux_rc_parser_path

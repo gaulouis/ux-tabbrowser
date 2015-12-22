@@ -24,6 +24,7 @@
 
 G_BEGIN_DECLS
 
+/*
 typedef struct _MwbRef {
     int count;
     void *ptr;
@@ -38,7 +39,7 @@ typedef struct _MwbRefShared {
     MwbRef parent;
     MwbRefOwner *owner;
 } MwbRefShared;
-
+*/
 //--------------
 
 typedef struct _UxGraphicsPainter {

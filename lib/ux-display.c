@@ -231,6 +231,7 @@ ux_style_path_get_graphics_path(GList *segments, UxDisplayViewport *viewport)
     return cr_path;
 }
 
+/*
 static cairo_path_t*
 cairo_dup_path(cairo_path_t *path)
 {
@@ -246,21 +247,95 @@ cairo_dup_path(cairo_path_t *path)
     cairo_surface_destroy(surface);
     return copy;
 }
+*/
+
+typedef struct _PathBorder {
+    cairo_path_t *top;
+    cairo_path_t *right;
+    cairo_path_t *bottom;
+    cairo_path_t *left;
+} PathBorder;
+
+static void
+ux_display_shape_add_graphics_border(UxDisplayShape *shape, PathBorder *cr_path_border, UxStyle *style)
+{
+    if (cr_path_border->top
+     && style->border->width.top.value
+     && style->border->color.top.type > UX_STYLE_COLOR_TRANSPARENT
+    ) {
+        UxGraphicsData *graphics_path = ux_graphics_path_new();
+        graphics_path->data.path.cr_path = cr_path_border->top;
+        ux_display_shape_add_graphics(shape, graphics_path);
+
+        UxGraphicsData *graphics_stroke = ux_graphics_stroke_new();
+        MurrineRGB rgb;
+        gdouble a;
+        ux_style_color_get_rgba(&style->border->color.top.value, &rgb, &a);
+        graphics_stroke->data.stroke.pattern = cairo_pattern_create_rgba(rgb.r, rgb.g, rgb.b, a);
+        graphics_stroke->data.stroke.width = style->border->width.top.value;
+        ux_display_shape_add_graphics(shape, graphics_stroke);
+    }
+
+    if (cr_path_border->right
+     && style->border->width.right.value
+     && style->border->color.right.type > UX_STYLE_COLOR_TRANSPARENT
+    ) {
+        UxGraphicsData *graphics_path = ux_graphics_path_new();
+        graphics_path->data.path.cr_path = cr_path_border->right;
+        ux_display_shape_add_graphics(shape, graphics_path);
+
+        UxGraphicsData *graphics_stroke = ux_graphics_stroke_new();
+        MurrineRGB rgb;
+        gdouble a;
+        ux_style_color_get_rgba(&style->border->color.right.value, &rgb, &a);
+        graphics_stroke->data.stroke.pattern = cairo_pattern_create_rgba(rgb.r, rgb.g, rgb.b, a);
+        graphics_stroke->data.stroke.width = style->border->width.right.value;
+        ux_display_shape_add_graphics(shape, graphics_stroke);
+    }
+
+    if (cr_path_border->bottom
+     && style->border->width.bottom.value
+     && style->border->color.bottom.type > UX_STYLE_COLOR_TRANSPARENT
+    ) {
+        UxGraphicsData *graphics_path = ux_graphics_path_new();
+        graphics_path->data.path.cr_path = cr_path_border->bottom;
+        ux_display_shape_add_graphics(shape, graphics_path);
+
+        UxGraphicsData *graphics_stroke = ux_graphics_stroke_new();
+        MurrineRGB rgb;
+        gdouble a;
+        ux_style_color_get_rgba(&style->border->color.bottom.value, &rgb, &a);
+        graphics_stroke->data.stroke.pattern = cairo_pattern_create_rgba(rgb.r, rgb.g, rgb.b, a);
+        graphics_stroke->data.stroke.width = style->border->width.bottom.value;
+        ux_display_shape_add_graphics(shape, graphics_stroke);
+    }
+
+    if (cr_path_border->left
+     && style->border->width.left.value
+     && style->border->color.left.type > UX_STYLE_COLOR_TRANSPARENT
+    ) {
+        UxGraphicsData *graphics_path = ux_graphics_path_new();
+        graphics_path->data.path.cr_path = cr_path_border->left;
+        ux_display_shape_add_graphics(shape, graphics_path);
+
+        UxGraphicsData *graphics_stroke = ux_graphics_stroke_new();
+        MurrineRGB rgb;
+        gdouble a;
+        ux_style_color_get_rgba(&style->border->color.left.value, &rgb, &a);
+        graphics_stroke->data.stroke.pattern = cairo_pattern_create_rgba(rgb.r, rgb.g, rgb.b, a);
+        graphics_stroke->data.stroke.width = style->border->width.left.value;
+        ux_display_shape_add_graphics(shape, graphics_stroke);
+    }
+
+}
 
 void ux_display_shape_set_style(UxDisplayShape *shape, UxStyle *style)
 {
     UxDisplayViewport *viewport = ux_display_object_get_viewport((UxDisplayObject *)shape);
     //UxDisplayContext *context = ux_display_viewport_get_context(viewport);
     UxDisplayContext *context = viewport->context;
-    enum {
-        TOP    = 0,
-        LEFT   = 1,
-        RIGHT  = 2,
-        BOTTOM = 3,
 
-        LENGTH = 4
-    };
-    cairo_path_t *cr_path_border[LENGTH] = {NULL, NULL, NULL, NULL};
+    PathBorder cr_path_border = {NULL, NULL, NULL, NULL};
     cairo_path_t *cr_path_shape = NULL;
     gboolean used_path_shape = FALSE;
 
@@ -270,7 +345,7 @@ void ux_display_shape_set_style(UxDisplayShape *shape, UxStyle *style)
         padding_top = style->padding->top.value;
 
     if (style->border) {
-        // create path for fill if background exist
+        // create shape
         if (style->border->path.top.segments
          && style->border->path.right.segments
          && style->border->path.bottom.segments
@@ -282,36 +357,29 @@ void ux_display_shape_set_style(UxDisplayShape *shape, UxStyle *style)
 
             // create stroke path
             {
-                // inset
-                // outset
-                gdouble FIX_X = style->border->width.top.value/2.0;
-                gdouble FIX_Y = -style->border->width.top.value/2.0;
-                gdouble FIX_WIDTH = -style->border->width.top.value/2.0;
-                gdouble FIX_HEIGHT = 0.0;
+                _viewport.x = viewport->x+viewport->height;
+                _viewport.y = viewport->y;
+                _viewport.width = viewport->width-2*viewport->height+1;
+                _viewport.height = viewport->height;
+                cr_path_border.top = ux_style_path_get_graphics_path(style->border->path.top.segments, &_viewport);
 
-                _viewport.x = viewport->x+viewport->height+FIX_X;
-                _viewport.y = viewport->y+FIX_Y;
-                _viewport.width = viewport->width-2*viewport->height+FIX_WIDTH;
-                _viewport.height = viewport->height+FIX_HEIGHT;
-                cr_path_border[TOP] = ux_style_path_get_graphics_path(style->border->path.top.segments, &_viewport);
+                _viewport.x = viewport->x+viewport->width-viewport->height;
+                _viewport.y = viewport->y;
+                _viewport.width = viewport->height;
+                _viewport.height = viewport->height;
+                cr_path_border.right = ux_style_path_get_graphics_path(style->border->path.right.segments, &_viewport);
 
-                _viewport.x = viewport->x+viewport->width-viewport->height+FIX_X;
-                _viewport.y = viewport->y+FIX_Y;
-                _viewport.width = viewport->height+FIX_WIDTH;
-                _viewport.height = viewport->height+FIX_HEIGHT;
-                cr_path_border[RIGHT] = ux_style_path_get_graphics_path(style->border->path.right.segments, &_viewport);
+                _viewport.x = viewport->x+viewport->height;
+                _viewport.y = viewport->y;
+                _viewport.width = viewport->width-2*viewport->height;
+                _viewport.height = viewport->height;
+                cr_path_border.bottom = ux_style_path_get_graphics_path(style->border->path.bottom.segments, &_viewport);
 
-                _viewport.x = viewport->x+viewport->height+FIX_X;
-                _viewport.y = viewport->y+FIX_Y;
-                _viewport.width = viewport->width-2*viewport->height+FIX_WIDTH;
-                _viewport.height = viewport->height+FIX_HEIGHT;
-                cr_path_border[BOTTOM] = ux_style_path_get_graphics_path(style->border->path.bottom.segments, &_viewport);
-
-                _viewport.x = viewport->x+FIX_X;
-                _viewport.y = viewport->y+FIX_Y;
-                _viewport.width = viewport->height+FIX_WIDTH;
-                _viewport.height = viewport->height+FIX_HEIGHT;
-                cr_path_border[LEFT] = ux_style_path_get_graphics_path(style->border->path.left.segments, &_viewport);
+                _viewport.x = viewport->x;
+                _viewport.y = viewport->y;
+                _viewport.width = viewport->height;
+                _viewport.height = viewport->height;
+                cr_path_border.left = ux_style_path_get_graphics_path(style->border->path.left.segments, &_viewport);
             }
 
             // create fill path
@@ -356,62 +424,7 @@ void ux_display_shape_set_style(UxDisplayShape *shape, UxStyle *style)
                 cairo_path_destroy(cr_path);
 
             }
-#if 0
-            cairo_new_path(cr);
-            cairo_path_t *cr_path;
 
-            // Pour le stroke path: y+0.5; height-0.5 <= prendre le border.width
-            // Pour le fill path : ne rien faire
-            _viewport.x = viewport->x+viewport->height;
-            _viewport.y = viewport->y+FIX_Y;
-            _viewport.width = viewport->width-2*viewport->height;
-            _viewport.height = viewport->height+FIX_HEIGHT;
-            cr_path = ux_style_path_get_graphics_path(style->border->path.top.segments, &_viewport);
-//g_print("Viewport{x: %d, y: %d, width: %d, height: %d}\n", _viewport.x, _viewport.y, _viewport.width, _viewport.height);
-//            graphics_path = ux_graphics_path_new();
-//            ux_graphics_path_set_cr_path(graphics_path, cr_path);
-//            ux_display_shape_add_graphics(shape, graphics_path);
-            cr_path_border[TOP] = cairo_dup_path(cr_path);
-            cr_path->data->header.type = CAIRO_PATH_LINE_TO;
-            cairo_append_path(cr, cr_path);
-
-            _viewport.x = viewport->x+viewport->width-viewport->height;
-            _viewport.y = viewport->y+FIX_Y;
-            _viewport.width = viewport->height;
-            _viewport.height = viewport->height+FIX_HEIGHT;
-            cr_path = ux_style_path_get_graphics_path(style->border->path.right.segments, &_viewport);
-//            graphics_path = ux_graphics_path_new();
-//            ux_graphics_path_set_cr_path(graphics_path, cr_path);
-//            ux_display_shape_add_graphics(shape, graphics_path);
-            cr_path_border[RIGHT] = cairo_dup_path(cr_path);
-            cr_path->data->header.type = CAIRO_PATH_LINE_TO;
-            cairo_append_path(cr, cr_path);
-
-            _viewport.x = viewport->x+viewport->height;
-            _viewport.y = viewport->y+FIX_Y;
-            _viewport.width = viewport->width-2*viewport->height;
-            _viewport.height = viewport->height+FIX_HEIGHT;
-            cr_path = ux_style_path_get_graphics_path(style->border->path.bottom.segments, &_viewport);
-//            graphics_path = ux_graphics_path_new();
-//            ux_graphics_path_set_cr_path(graphics_path, cr_path);
-//            ux_display_shape_add_graphics(shape, graphics_path);
-            cr_path_border[BOTTOM] = cairo_dup_path(cr_path);
-            cr_path->data->header.type = CAIRO_PATH_LINE_TO;
-            cairo_append_path(cr, cr_path);
-
-            _viewport.x = viewport->x;
-            _viewport.y = viewport->y+FIX_Y;
-            _viewport.width = viewport->height;
-            _viewport.height = viewport->height+FIX_HEIGHT;
-            cr_path = ux_style_path_get_graphics_path(style->border->path.left.segments, &_viewport);
-//            graphics_path = ux_graphics_path_new();
-//            ux_graphics_path_set_cr_path(graphics_path, cr_path);
-//            ux_display_shape_add_graphics(shape, graphics_path);
-            cr_path_border[LEFT] = cairo_dup_path(cr_path);
-            cr_path->data->header.type = CAIRO_PATH_LINE_TO;
-            cairo_append_path(cr, cr_path);
-            cr_path_shape = cairo_copy_path(cr);
-#endif
             cairo_destroy(cr);
             cairo_surface_destroy(surface);
 
@@ -450,29 +463,32 @@ void ux_display_shape_set_style(UxDisplayShape *shape, UxStyle *style)
         cairo_t *cr = cairo_create(surface);
 
         cairo_new_path(cr);
-        cairo_move_to(cr, viewport->x+hint_a, viewport->y+hint_a);
-        cairo_line_to(cr, viewport->x+viewport->width+hint_s, viewport->y+hint_a);
-        cr_path_border[TOP] = cairo_copy_path(cr);
+        cairo_move_to(cr, viewport->x, viewport->y+hint_a);
+        cairo_line_to(cr, viewport->x+viewport->width, viewport->y+hint_a);
+        cr_path_border.top = cairo_copy_path(cr);
 
         cairo_new_path(cr);
         cairo_move_to(cr, viewport->x+viewport->width+hint_s, viewport->y+hint_a);
         cairo_line_to(cr, viewport->x+viewport->width+hint_s, viewport->y+viewport->height+hint_s);
-        cr_path_border[RIGHT] = cairo_copy_path(cr);
+        cr_path_border.right = cairo_copy_path(cr);
 
         cairo_new_path(cr);
         cairo_move_to(cr, viewport->x+viewport->width, viewport->y+viewport->height-hint_s);
         cairo_line_to(cr, viewport->x, viewport->y+viewport->height-hint_s);
-        cr_path_border[BOTTOM] = cairo_copy_path(cr);
+        cr_path_border.bottom = cairo_copy_path(cr);
 
         cairo_new_path(cr);
         cairo_move_to(cr, viewport->x+hint_a, viewport->y+viewport->height+hint_s);
         cairo_line_to(cr, viewport->x+hint_a, viewport->y+hint_a);
-        cr_path_border[LEFT] = cairo_copy_path(cr);
+        cr_path_border.left = cairo_copy_path(cr);
 
         cairo_destroy(cr);
         cairo_surface_destroy(surface);
     }
 
+    if (UX_STYLE_PAINT_TYPE_STROKE_AND_FILL==style->paint && style->border) {
+        ux_display_shape_add_graphics_border(shape, &cr_path_border, style);
+    }
 
     if (style->background) {
         //if (style->background->color) {
@@ -618,101 +634,9 @@ void ux_display_shape_set_style(UxDisplayShape *shape, UxStyle *style)
         //}
     }
 
-    /*
-    if (style->border) {
-        if (style->border->width.top.value
-         && style->border->color.top.type > UX_STYLE_COLOR_TRANSPARENT
-        ) {
-            UxGraphicsData *graphics_path = ux_graphics_path_new();
-            ux_graphics_path_set_cr_path(graphics_path, cr_path_border[TOP]);
-            ux_display_shape_add_graphics(shape, graphics_path);
 
-            MurrineRGB rgb;
-            ux_style_color_get_rgb(&style->border->color.top.value, &rgb);
-            UxGraphicsData *graphics_stroke = ux_graphics_stroke_new();
-            graphics_stroke->data.stroke.pattern = cairo_pattern_create_rgb(rgb.r, rgb.g, rgb.b);
-            graphics_stroke->data.stroke.width = style->border->width.top.value;
-            graphics_stroke->data.stroke.cap = CAIRO_LINE_CAP_SQUARE;
-
-            ux_display_shape_add_graphics(shape, graphics_stroke);
-        }
-
-        if (style->border->width.bottom.value
-        ) {
-            UxGraphicsData *graphics_path = ux_graphics_path_new();
-            ux_graphics_path_set_cr_path(graphics_path, cr_path_border[BOTTOM]);
-            ux_display_shape_add_graphics(shape, graphics_path);
-
-            UxGraphicsData *graphics_stroke = ux_graphics_stroke_new();
-            MurrineRGB rgb;
-            ux_style_color_get_rgb(&style->border->color.bottom.value, &rgb);
-            graphics_stroke->data.stroke.pattern = cairo_pattern_create_rgb(rgb.r, rgb.g, rgb.b);
-            graphics_stroke->data.stroke.width = style->border->width.bottom.value;
-            graphics_stroke->data.stroke.cap = CAIRO_LINE_CAP_SQUARE;
-            ux_display_shape_add_graphics(shape, graphics_stroke);
-        }
-        // TODO : style->border->width.left|right
-    }
-    */
-
-    if (style->border) {
-
-        if (style->border->width.top.value && style->border->color.top.type > UX_STYLE_COLOR_TRANSPARENT) {
-            UxGraphicsData *graphics_path = ux_graphics_path_new();
-            graphics_path->data.path.cr_path = cr_path_border[TOP];
-            ux_display_shape_add_graphics(shape, graphics_path);
-
-            UxGraphicsData *graphics_stroke = ux_graphics_stroke_new();
-            MurrineRGB rgb;
-            gdouble a;
-            ux_style_color_get_rgba(&style->border->color.top.value, &rgb, &a);
-            graphics_stroke->data.stroke.pattern = cairo_pattern_create_rgba(rgb.r, rgb.g, rgb.b, a);
-            graphics_stroke->data.stroke.width = style->border->width.top.value;
-            ux_display_shape_add_graphics(shape, graphics_stroke);
-        }
-
-        if (style->border->width.right.value && style->border->color.right.type > UX_STYLE_COLOR_TRANSPARENT) {
-            UxGraphicsData *graphics_path = ux_graphics_path_new();
-            graphics_path->data.path.cr_path = cr_path_border[RIGHT];
-            ux_display_shape_add_graphics(shape, graphics_path);
-
-            UxGraphicsData *graphics_stroke = ux_graphics_stroke_new();
-            MurrineRGB rgb;
-            gdouble a;
-            ux_style_color_get_rgba(&style->border->color.right.value, &rgb, &a);
-            graphics_stroke->data.stroke.pattern = cairo_pattern_create_rgba(rgb.r, rgb.g, rgb.b, a);
-            graphics_stroke->data.stroke.width = style->border->width.right.value;
-            ux_display_shape_add_graphics(shape, graphics_stroke);
-        }
-
-        if (style->border->width.bottom.value && style->border->color.bottom.type > UX_STYLE_COLOR_TRANSPARENT) {
-            UxGraphicsData *graphics_path = ux_graphics_path_new();
-            graphics_path->data.path.cr_path = cr_path_border[BOTTOM];
-            ux_display_shape_add_graphics(shape, graphics_path);
-
-            UxGraphicsData *graphics_stroke = ux_graphics_stroke_new();
-            MurrineRGB rgb;
-            gdouble a;
-            ux_style_color_get_rgba(&style->border->color.bottom.value, &rgb, &a);
-            graphics_stroke->data.stroke.pattern = cairo_pattern_create_rgba(rgb.r, rgb.g, rgb.b, a);
-            graphics_stroke->data.stroke.width = style->border->width.bottom.value;
-            ux_display_shape_add_graphics(shape, graphics_stroke);
-        }
-
-        if (style->border->width.left.value && style->border->color.left.type > UX_STYLE_COLOR_TRANSPARENT) {
-            UxGraphicsData *graphics_path = ux_graphics_path_new();
-            graphics_path->data.path.cr_path = cr_path_border[LEFT];
-            ux_display_shape_add_graphics(shape, graphics_path);
-
-            UxGraphicsData *graphics_stroke = ux_graphics_stroke_new();
-            MurrineRGB rgb;
-            gdouble a;
-            ux_style_color_get_rgba(&style->border->color.left.value, &rgb, &a);
-            graphics_stroke->data.stroke.pattern = cairo_pattern_create_rgba(rgb.r, rgb.g, rgb.b, a);
-            graphics_stroke->data.stroke.width = style->border->width.left.value;
-            ux_display_shape_add_graphics(shape, graphics_stroke);
-        }
-
+    if (UX_STYLE_PAINT_TYPE_FILL_AND_STROKE==style->paint && style->border) {
+        ux_display_shape_add_graphics_border(shape, &cr_path_border, style);
     }
 
 }
@@ -726,6 +650,9 @@ void ux_display_shape_render(UxDisplayShape *shape)
 {
     UxDisplayObject *object = (UxDisplayObject *) shape;
     cairo_t *cr = ux_display_context_create_cairo(object->viewport->context);
+    cairo_rectangle(cr, object->viewport->x, object->viewport->y, object->viewport->width, object->viewport->height);
+    cairo_clip(cr);
+    cairo_new_path(cr);
     ux_graphics_draw(cr, shape->datas);
     cairo_destroy(cr);
 }

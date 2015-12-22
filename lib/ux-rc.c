@@ -56,8 +56,6 @@ gboolean ux_rc_parse_background(const GParamSpec *pspec,
     UxStyleBackground *background = g_new(UxStyleBackground, 1);
     ux_style_background_init(background);
 
-    g_print("background: %s\n", rc_string->str);
-
     UxStyleColor *color = &background->color;
     ptr = ux_parser_parse_color(color, ptr, end);
 
@@ -82,6 +80,33 @@ gboolean ux_rc_parse_background(const GParamSpec *pspec,
     return TRUE;
 }
 
+/*
+gboolean ux_rc_parse_border_image(const GParamSpec *pspec,
+                           const GString    *rc_string,
+                           GValue           *property_value)
+{
+
+    gchar *ptr = rc_string->str;
+    gchar *end = rc_string->str + rc_string->len;
+    while (ptr < end && (ux_parser_is_space(*ptr)||*ptr=='"') )
+        ptr++;
+    while (end > ptr && (ux_parser_is_space(*end)||*end=='"') )
+        end--;
+
+    UxStyleBorderImage *border_image = g_new(UxStyleBorderImage, 1);
+    ux_style_background_init(border_image);
+
+    UxStyleColor *color = &background->color;
+    ptr = ux_parser_parse_color(color, ptr, end);
+
+    UxStyleImage *image = &background->image;
+    ptr = ux_parser_parse_image(image, ptr, end);
+
+    g_value_set_boxed(property_value, background);
+
+    return TRUE;
+}
+*/
 
 gboolean ux_rc_parse_path(const GParamSpec *pspec,
                           const GString    *rc_string,
@@ -97,7 +122,6 @@ gboolean ux_rc_parse_path(const GParamSpec *pspec,
     UxStylePath *path = g_new(UxStylePath, 1);
     ux_style_path_init(path);
 
-    g_print("path: %s\n", rc_string->str);
     ptr = ux_parser_parse_path(path, ptr, end);
 
 
