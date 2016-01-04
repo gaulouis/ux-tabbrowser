@@ -4157,7 +4157,7 @@ ux_tabbrowser_paint (GtkWidget    *widget,
   if (tab_pos == GTK_POS_TOP)
     area_bar.y = widget->allocation.y + border_width;
   else
-    area_bar.y = height+padding_top;
+    area_bar.y = height;
   area_bar.width = width;
   area_bar.height = page->allocation.height+padding_top;
 

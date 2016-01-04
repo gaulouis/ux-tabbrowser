@@ -35,9 +35,9 @@ style "Unity" {
 
 #    UxTabbrowser::tab-border-width = 4
 #    UxTabbrowser::tab-border-pattern= "linear-gradient(top, shade(@dark_bg_color, 0.8) 0px, shade(@dark_bg_color, 1.1) 100%)"
-    UxTabbrowser::tab-border-left-color= "shade (@dark_bg_color, 1.1)"
-    UxTabbrowser::tab-border-top-color= "shade (@dark_bg_color, 1.1)"
-    UxTabbrowser::tab-border-right-color= "shade (@dark_bg_color, 1.1)"
+    UxTabbrowser::tab-border-left-color= "#FF0000" # "shade (@dark_bg_color, 1.1)"
+    UxTabbrowser::tab-border-top-color= "#FF0000" # "shade (@dark_bg_color, 1.1)"
+    UxTabbrowser::tab-border-right-color= "#FF0000" # "shade (@dark_bg_color, 1.1)"
     UxTabbrowser::tab-border-left-width= 2
     UxTabbrowser::tab-border-top-width= 2
     UxTabbrowser::tab-border-right-width= 2

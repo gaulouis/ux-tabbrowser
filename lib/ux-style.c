@@ -593,6 +593,77 @@ ux_style_padding_free(UxStylePadding* padding)
     }
 }
 
+UxStyleMatrix*
+ux_style_matrix_new(void)
+{
+    UxStyleMatrix *matrix = g_new(UxStyleMatrix, 1);
+    return matrix;
+}
+
+void
+ux_style_matrix_init_identity(UxStyleMatrix *matrix)
+{
+    UxStyleMatrix identity = {1.0, 0.0, 0.0, 1.0, 0.0, 0.0};
+    *matrix = identity;
+}
+
+UxStyleMatrix*
+ux_style_matrix_new_identity(void)
+{
+    UxStyleMatrix *matrix = g_new(UxStyleMatrix, 1);
+    ux_style_matrix_init_identity(matrix);
+    return matrix;
+}
+void
+ux_style_matrix_free(UxStyleMatrix *matrix)
+{
+    if (matrix) {
+        g_free(matrix);
+    }
+}
+static void
+ux_style_matrix_multiply (UxStyleMatrix *result, const UxStyleMatrix *a, const UxStyleMatrix *b)
+{
+    UxStyleMatrix r;
+
+    r.xx = a->xx * b->xx + a->yx * b->xy;
+    r.yx = a->xx * b->yx + a->yx * b->yy;
+
+    r.xy = a->xy * b->xx + a->yy * b->xy;
+    r.yy = a->xy * b->yx + a->yy * b->yy;
+
+    r.x0 = a->x0 * b->xx + a->y0 * b->xy + b->x0;
+    r.y0 = a->x0 * b->yx + a->y0 * b->yy + b->y0;
+
+    *result = r;
+}
+void
+ux_style_matrix_rotate(UxStyleMatrix *matrix, gdouble a/*radians*/)
+{
+    UxStyleMatrix tmp;
+    gdouble s = sin (a);
+    gdouble c = cos (a);
+
+    ux_style_matrix_init_identity (&tmp);
+    tmp.xx = c;
+    tmp.yx = s;
+    tmp.xy = -s;
+    tmp.yy = c;
+
+    ux_style_matrix_multiply (matrix, &tmp, matrix);
+}
+void
+ux_style_matrix_scale(UxStyleMatrix *matrix, gdouble x, gdouble y)
+{
+    UxStyleMatrix tmp;
+
+    ux_style_matrix_init_identity (&tmp);
+    tmp.xx = x;
+    tmp.yy = y;
+
+    ux_style_matrix_multiply (matrix, &tmp, matrix);
+}
+
 void ux_style_init(UxStyle *style)
 {
     style->background = NULL;
@@ -601,6 +672,7 @@ void ux_style_init(UxStyle *style)
     style->color = NULL;
     style->padding = NULL;
     //...
+    style->matrix = NULL;
 }
 
 void
@@ -852,6 +924,38 @@ ux_paint_extension(GtkStyle           *style,
         ux_style.background = bg_property;
     }
     ux_style.padding = padding;
+
+    if (GTK_POS_BOTTOM==gap_side && ux_style.matrix) {
+        ux_style_matrix_free(ux_style.matrix);
+        ux_style.matrix = NULL;
+    }
+    if (GTK_POS_BOTTOM!=gap_side) {
+        if (ux_style.matrix) {
+            ux_style_matrix_init_identity(ux_style.matrix);
+        } else {
+            ux_style.matrix = ux_style_matrix_new_identity();
+        }
+    }
+    switch (gap_side)
+    {
+    case GTK_POS_LEFT:/*tab right*/
+        ux_style.matrix = ux_style_matrix_new_identity();
+        ux_style_matrix_rotate(ux_style.matrix, -M_PI/2.0);
+        break;
+    case GTK_POS_RIGHT:/*tab left*/
+        ux_style.matrix = ux_style_matrix_new_identity();
+        ux_style_matrix_rotate(ux_style.matrix, M_PI/2.0);
+        break;
+    case GTK_POS_TOP:/*tab bottom*/
+        ux_style.matrix = ux_style_matrix_new_identity();
+        ux_style_matrix_scale(ux_style.matrix, 1.0, -1.0);
+        break;
+    case GTK_POS_BOTTOM:/*tab top*/
+    default:
+        break;
+    }
+
+
   //ux_style...
     UxDisplayShape *box = ux_display_shape_new(viewport, NULL);// UxDisplayObject *parent
     ux_display_shape_set_style(box, &ux_style);

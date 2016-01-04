@@ -26,29 +26,37 @@
 G_BEGIN_DECLS
 
 
+typedef enum   _UxStylePaintType            UxStylePaintType;
+typedef enum   _UxStyleLengthType           UxStyleLengthType;
+typedef struct _UxStyleLength               UxStyleLength;
+typedef enum   _UxStyleSideType             UxStyleSideType;
+typedef enum   _UxStyleDirectionType        UxStyleDirectionType;
+typedef struct _UxStyleDirection            UxStyleDirection;
+typedef enum   _UxStylePositionType         UxStylePositionType;
+typedef enum   _UxStyleColorType            UxStyleColorType;
+typedef struct _UxStyleColor                UxStyleColor;
+typedef struct _UxStyleColorStop            UxStyleColorStop;
+typedef enum   _UxStyleImageType            UxStyleImageType;
+typedef struct _UxStyleImage                UxStyleImage;
+typedef struct _UxStyleImageLinearGradient  UxStyleImageLinearGradient;
+typedef struct _UxStyleBackground           UxStyleBackground;
+typedef struct _UxStyleBorder               UxStyleBorder;
+typedef struct _UxStyleBorderImage          UxStyleBorderImage;
+typedef struct _UxStylePathElement          UxStylePathElement;
+typedef struct _UxStylePath                 UxStylePath;
+typedef enum   _UxStyleBackgroundRepeatType UxStyleBackgroundRepeatType;
+typedef struct _UxStyleBackgroundRepeat     UxStyleBackgroundRepeat;
+typedef struct _UxStyleBackgroundPosition   UxStyleBackgroundPosition;
+typedef struct _UxStylePadding              UxStylePadding;
+typedef struct _UxStyleBorderWidth          UxStyleBorderWidth;
+typedef struct _UxStyleBorderColor          UxStyleBorderColor;
+typedef struct _UxStyleBorderPath           UxStyleBorderPath;
+typedef struct _UxStyleMatrix               UxStyleMatrix;
+
+
 #define UX_TYPE_STYLE_COLOR               (ux_style_color_get_type ())
 #define UX_TYPE_STYLE_BACKGROUND          (ux_style_background_get_type ())
 #define UX_TYPE_STYLE_PATH                (ux_style_path_get_type ())
-
-
-typedef enum   _UxStyleLengthType          UxStyleLengthType;
-typedef struct _UxStyleLength              UxStyleLength;
-typedef enum   _UxStyleDirectionType       UxStyleDirectionType;
-typedef enum   _UxStyleSideType            UxStyleSideType;
-typedef struct _UxStyleDirection           UxStyleDirection;
-typedef enum   _UxStylePositionType        UxStylePositionType;
-typedef enum   _UxStyleColorType           UxStyleColorType;
-typedef struct _UxStyleColor               UxStyleColor;
-typedef struct _UxStyleColorStop           UxStyleColorStop;
-typedef struct _UxStyleImage               UxStyleImage;
-typedef enum   _UxStyleImageType           UxStyleImageType;
-typedef struct _UxStyleImageLinearGradient UxStyleImageLinearGradient;
-typedef struct _UxStyleBackground          UxStyleBackground;
-typedef enum   _UxStylePaintType           UxStylePaintType;
-typedef struct _UxStyleBorder              UxStyleBorder;
-typedef struct _UxStyleBorderImage         UxStyleBorderImage;
-typedef struct _UxStylePathElement         UxStylePathElement;
-typedef struct _UxStylePath                UxStylePath;
 
 
 enum _UxStyleLengthType {
@@ -167,8 +175,6 @@ struct _UxStyleImage
     } data;
 };
 
-typedef enum _UxStyleBackgroundRepeatType UxStyleBackgroundRepeatType;
-
 enum _UxStyleBackgroundRepeatType
 {
     UX_STYLE_BACKGROUND_REPEAT_REPEAT,
@@ -182,17 +188,17 @@ enum _UxStyleBackgroundRepeatType
 GType ux_style_background_repeat_type_get_type (void) G_GNUC_CONST;
 #define UX_TYPE_STYLE_BACKGROUND_REPEAT_TYPE (ux_style_background_repeat_type_get_type ())
 
-typedef struct _UxStyleBackgroundRepeat
+struct _UxStyleBackgroundRepeat
 {
     UxStyleBackgroundRepeatType x;
     UxStyleBackgroundRepeatType y;
-} UxStyleBackgroundRepeat;
+};
 
-typedef struct _UxStyleBackgroundPosition
+struct _UxStyleBackgroundPosition
 {
     UxStylePositionType x;
     UxStylePositionType y;
-} UxStyleBackgroundPosition;
+};
 
 /**
  * Boxed
@@ -283,13 +289,13 @@ struct _UxStylePath
 };
 
 
-typedef struct _UxStylePadding
+struct _UxStylePadding
 {
     UxStyleLength top;
     UxStyleLength right;
     UxStyleLength bottom;
     UxStyleLength left;
-} UxStylePadding;
+};
 
 struct _UxStyleBorderImage
 {
@@ -297,29 +303,30 @@ struct _UxStyleBorderImage
     //UxStyleBorderRepeat repeat; //stretch
 };
 
-typedef struct _UxStyleBorderWidth
+struct _UxStyleBorderWidth
 {
     UxStyleLength top;
     UxStyleLength right;
     UxStyleLength bottom;
     UxStyleLength left;
-} UxStyleBorderWidth;
+};
 
-typedef struct _UxStyleBorderColor
+struct _UxStyleBorderColor
 {
     UxStyleColor top;
     UxStyleColor right;
     UxStyleColor bottom;
     UxStyleColor left;
-} UxStyleBorderColor;
+};
 
-typedef struct _UxStyleBorderPath
+
+struct _UxStyleBorderPath
 {
     UxStylePath top;
     UxStylePath right;
     UxStylePath bottom;
     UxStylePath left;
-} UxStyleBorderPath;
+};
 
 struct _UxStyleBorder
 {
@@ -331,15 +338,23 @@ struct _UxStyleBorder
     //UxStyleBorderSlice slice;
 };
 
+struct _UxStyleMatrix
+{
+    double xx; double yx;
+    double xy; double yy;
+    double x0; double y0;
+};
+
 typedef struct _UxStyle UxStyle;
 struct _UxStyle
 {
-    UxStylePaintType *paint;
+    UxStylePaintType   paint;
     UxStyleBackground *background;
-    UxStyleColor *color;
+    UxStyleColor   *color;
     //  position, column, text-justify, align, font, transform, transition
-    UxStyleBorder *border;
+    UxStyleBorder  *border;
     UxStylePadding *padding;
+    UxStyleMatrix  *matrix;
     //UxStyleMargin
     //int width
     //int height
@@ -347,7 +362,9 @@ struct _UxStyle
     //UxStyleTextShadow
     //UxStyleBoxShadow
 } ;
+//UxStyle            *ux_style_new(void);
 void                ux_style_init(UxStyle *style);
+//void                ux_style_free(UxStyle *style);
 void                ux_style_border_init(UxStyleBorder *border);
 UxStyleBorder      *ux_style_border_new();
 void                ux_style_border_free(UxStyleBorder *border);
@@ -364,6 +381,12 @@ void                ux_style_background_free(UxStyleBackground *background);
 GType               ux_style_path_get_type               (void);
 void                ux_style_path_init(UxStylePath *path);
 //void                ux_style_path_free(UxStylePath *path);
+UxStyleMatrix      *ux_style_matrix_new(void);
+void                ux_style_matrix_init_identity(UxStyleMatrix *matrix);
+UxStyleMatrix      *ux_style_matrix_new_identity(void);
+void                ux_style_matrix_free(UxStyleMatrix *matrix);
+void                ux_style_matrix_rotate(UxStyleMatrix *matrix, gdouble a);
+void                ux_style_matrix_scale(UxStyleMatrix *matrix, gdouble x, gdouble y);
 
 void                ux_paint_box(GtkStyle           *style,
                                  GdkWindow          *window,

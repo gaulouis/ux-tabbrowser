@@ -124,31 +124,25 @@ mwb_cairo_path_merge_cairo_path(cairo_path_t *path, cairo_path_t *result_path)
     */
 }
 
-cairo_path_t*
-ux_style_path_get_graphics_path(GList *segments, UxDisplayViewport *viewport)
+static cairo_path_t*
+ux_style_path_get_graphics_path(GList *segments, UxDisplayViewport *viewport, UxStyle *style)
 {
     UxStylePathElement *segment;
-//    gint data_num_length = 0;
-//    for(segments = style->border->path.left.segments; segments; segments = segments->next) {
-//        segment = (UxStylePathElement *) segment->data;
-//        data_num_length += segment->length + 2;
-//    }
     cairo_surface_t *surface = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, 0,0);
     cairo_t *cr = cairo_create(surface);
-//    path = g_new(cairo_path_t, 1);
-//    path->status   = CAIRO_STATUS_SUCCESS;
-//    path->num_data = svg_path->cairo_path_num_data;
-//    path->data     = (cairo_path_data_t*) g_new(cairo_path_data_t, svg_path->cairo_path_num_data);
-#define MARGIN_TOP 0.0 /*4.0*/
-#define FIX_TOP 0.0
+
     cairo_matrix_t matrix;
     cairo_matrix_init_identity(&matrix);
-    cairo_matrix_translate(&matrix, viewport->x, viewport->y+MARGIN_TOP+FIX_TOP);
-    //cairo_matrix_scale(&matrix, viewport->x, viewport->y);
+    if (style->matrix) {
+        cairo_matrix_translate(&matrix, viewport->x, viewport->y+viewport->height);
+        cairo_matrix_multiply(&matrix, (cairo_matrix_t*)style->matrix, &matrix);
+    } else {
+        cairo_matrix_translate(&matrix, viewport->x, viewport->y);
+    }
     cairo_set_matrix(cr, &matrix);
 
     gdouble width = viewport->width;
-    gdouble height = viewport->height - MARGIN_TOP;
+    gdouble height = viewport->height;
     struct {
         gdouble x1;
         gdouble y1;
@@ -355,31 +349,40 @@ void ux_display_shape_set_style(UxDisplayShape *shape, UxStyle *style)
             cairo_t *cr = cairo_create(surface);
             UxDisplayViewport _viewport;
 
+
+            // style.size:box-border box-content;
+            gdouble STROKE_LENGTH = ux_style_length_get_value(&style->border->width.top, 1.0) / 2.0;
+            gdouble FIX_POS = STROKE_LENGTH;
+            gdouble FIX_LENGTH = -STROKE_LENGTH;
+            if (style->matrix && style->matrix->yy==-1.0) {
+                FIX_POS = 0;
+            }
+
             // create stroke path
             {
                 _viewport.x = viewport->x+viewport->height;
-                _viewport.y = viewport->y;
+                _viewport.y = viewport->y+FIX_POS;
                 _viewport.width = viewport->width-2*viewport->height+1;
-                _viewport.height = viewport->height;
-                cr_path_border.top = ux_style_path_get_graphics_path(style->border->path.top.segments, &_viewport);
+                _viewport.height = viewport->height+FIX_LENGTH;
+                cr_path_border.top = ux_style_path_get_graphics_path(style->border->path.top.segments, &_viewport, style);
 
                 _viewport.x = viewport->x+viewport->width-viewport->height;
-                _viewport.y = viewport->y;
+                _viewport.y = viewport->y+FIX_POS;
                 _viewport.width = viewport->height;
-                _viewport.height = viewport->height;
-                cr_path_border.right = ux_style_path_get_graphics_path(style->border->path.right.segments, &_viewport);
+                _viewport.height = viewport->height+FIX_LENGTH;
+                cr_path_border.right = ux_style_path_get_graphics_path(style->border->path.right.segments, &_viewport, style);
 
                 _viewport.x = viewport->x+viewport->height;
-                _viewport.y = viewport->y;
+                _viewport.y = viewport->y+FIX_POS;
                 _viewport.width = viewport->width-2*viewport->height;
-                _viewport.height = viewport->height;
-                cr_path_border.bottom = ux_style_path_get_graphics_path(style->border->path.bottom.segments, &_viewport);
+                _viewport.height = viewport->height+FIX_LENGTH;
+                cr_path_border.bottom = ux_style_path_get_graphics_path(style->border->path.bottom.segments, &_viewport, style);
 
                 _viewport.x = viewport->x;
-                _viewport.y = viewport->y;
+                _viewport.y = viewport->y+FIX_POS;
                 _viewport.width = viewport->height;
-                _viewport.height = viewport->height;
-                cr_path_border.left = ux_style_path_get_graphics_path(style->border->path.left.segments, &_viewport);
+                _viewport.height = viewport->height+FIX_LENGTH;
+                cr_path_border.left = ux_style_path_get_graphics_path(style->border->path.left.segments, &_viewport, style);
             }
 
             // create fill path
@@ -387,37 +390,37 @@ void ux_display_shape_set_style(UxDisplayShape *shape, UxStyle *style)
                 cairo_path_t *cr_path;
 
                 _viewport.x = viewport->x+viewport->height;
-                _viewport.y = viewport->y;
+                _viewport.y = viewport->y+FIX_POS;
                 _viewport.width = viewport->width-2*viewport->height;
-                _viewport.height = viewport->height;
-                cr_path = ux_style_path_get_graphics_path(style->border->path.top.segments, &_viewport);
+                _viewport.height = viewport->height+FIX_LENGTH;
+                cr_path = ux_style_path_get_graphics_path(style->border->path.top.segments, &_viewport, style);
                 cr_path->data->header.type = CAIRO_PATH_LINE_TO;
                 cairo_append_path(cr, cr_path);
                 cairo_path_destroy(cr_path);
 
                 _viewport.x = viewport->x+viewport->width-viewport->height;
-                _viewport.y = viewport->y;
+                _viewport.y = viewport->y+FIX_POS;
                 _viewport.width = viewport->height;
-                _viewport.height = viewport->height;
-                cr_path = ux_style_path_get_graphics_path(style->border->path.right.segments, &_viewport);
+                _viewport.height = viewport->height+FIX_LENGTH;
+                cr_path = ux_style_path_get_graphics_path(style->border->path.right.segments, &_viewport, style);
                 cr_path->data->header.type = CAIRO_PATH_LINE_TO;
                 cairo_append_path(cr, cr_path);
                 cairo_path_destroy(cr_path);
 
                 _viewport.x = viewport->x+viewport->height;
-                _viewport.y = viewport->y;
+                _viewport.y = viewport->y+FIX_POS;
                 _viewport.width = viewport->width-2*viewport->height;
-                _viewport.height = viewport->height;
-                cr_path = ux_style_path_get_graphics_path(style->border->path.bottom.segments, &_viewport);
+                _viewport.height = viewport->height+FIX_LENGTH;
+                cr_path = ux_style_path_get_graphics_path(style->border->path.bottom.segments, &_viewport, style);
                 cr_path->data->header.type = CAIRO_PATH_LINE_TO;
                 cairo_append_path(cr, cr_path);
                 cairo_path_destroy(cr_path);
 
                 _viewport.x = viewport->x;
-                _viewport.y = viewport->y;
+                _viewport.y = viewport->y+FIX_POS;
                 _viewport.width = viewport->height;
-                _viewport.height = viewport->height;
-                cr_path = ux_style_path_get_graphics_path(style->border->path.left.segments, &_viewport);
+                _viewport.height = viewport->height+FIX_LENGTH;
+                cr_path = ux_style_path_get_graphics_path(style->border->path.left.segments, &_viewport, style);
                 cr_path->data->header.type = CAIRO_PATH_LINE_TO;
                 cairo_append_path(cr, cr_path);
                 cr_path_shape = cairo_copy_path(cr);
@@ -650,9 +653,12 @@ void ux_display_shape_render(UxDisplayShape *shape)
 {
     UxDisplayObject *object = (UxDisplayObject *) shape;
     cairo_t *cr = ux_display_context_create_cairo(object->viewport->context);
-    cairo_rectangle(cr, object->viewport->x, object->viewport->y, object->viewport->width, object->viewport->height);
+    //cliping
+    cairo_rectangle(cr, object->viewport->x, object->viewport->y,
+                        object->viewport->width, object->viewport->height);
     cairo_clip(cr);
     cairo_new_path(cr);
+    // end cliping
     ux_graphics_draw(cr, shape->datas);
     cairo_destroy(cr);
 }
